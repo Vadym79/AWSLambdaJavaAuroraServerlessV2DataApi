@@ -1,3 +1,5 @@
+Example of Lambda using the new Amazon Aurora Serverless V2 Data API with AWS SDK for Java
+
 Execute these 2  sql statements before calling GetProductByIdViaServerlessV2DataAPILambda via API Gateway
 
 CREATE TABLE products (

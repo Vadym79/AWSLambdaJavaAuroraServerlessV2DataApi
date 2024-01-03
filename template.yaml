@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  AWSLambdaJava21ServerlessV2DataApi
+  AWSLambdaJavaAuroraServerlessV2ViaDataApiProductApi
   Sample SAM Template
 
 Parameters:
@@ -53,8 +53,8 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !Ref Stage
-      Name: AWSServerlessV2ProductApiViaDataApi
-      Description: Api for Serverless V2 Data Api access
+      Name: AWSAuroraServerlessV2ProductApiViaDataApi
+      Description: Api for Aurora Serverless V2 Data Api access
       AccessLogSetting:
         DestinationArn: !Sub ${MyApiLogGroup.Arn} # This Log Group is already created within our SAM Template
         Format: "{'integrationLatency':'$context.integrationLatency', 'latency':'$context.responseLatency', 'requestId':'$context.requestId', 'ip': '$context.identity.sourceIp', 'caller':'$context.identity.caller', 'user':'$context.identity.user','requestTime':'$context.requestTime', 'xrayTraceId':'$context.xrayTraceId', 'wafResponseCode':'$context.wafResponseCode', 'httpMethod':'$context.httpMethod','resourcePath':'$context.resourcePath', 'status':'$context.status','protocol':'$context.protocol', 'responseLength':'$context.responseLength' }"
@@ -80,8 +80,8 @@ Resources:
       ApiStages: 
         - ApiId: !Ref MyApi
           Stage: !Ref Stage
-      UsagePlanName: AWSServerlessV2ProductApiViaDataApiUsagePlan
-      Description: Usage plan for AWSServerlessV2ProductApiViaDataApi
+      UsagePlanName: AWSAuroraServerlessV2ProductApiViaDataApiUsagePlan
+      Description: Usage plan for AWSAuroraServerlessV2ProductApiViaDataApi
       Quota:
           Limit: 500000
           Period: DAY
@@ -94,11 +94,11 @@ Resources:
     DependsOn:  
        - MyApiStage
     Properties: 
-      Name: "AWSServerlessV2ProductApiViaDataApuAKey"
-      Description: "AWSServerlessV2ProductApiViaDataApi Api Key"
+      Name: "AWSAuroraServerlessV2ProductApiViaDataApuAKey"
+      Description: "AWSAuroraServerlessV2ProductApiViaDataApi Api Key"
       Enabled: true
       GenerateDistinctId: false
-      Value: a6ZbcDefQW12BN56WEX7
+      Value: a6ZbcDefQW12BN56WEW7
       StageKeys:
         - RestApiId: !Ref MyApi
           StageName: !Ref Stage
@@ -116,7 +116,8 @@ Resources:
   GetProductByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: GetProductByIdViaServerlessV2DataApiLambda
+      FunctionName: GetProductByIdViaAuroraServerlessV2DataApiLambda
+      Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2DataApiHandler::handleRequest
       Environment:
         Variables:
           DB_ENDPOINT: !GetAtt AuroraServerlessV2Cluster.Endpoint.Address
@@ -134,7 +135,6 @@ Resources:
               Resource:
                 !Ref DBSecret
                 
-      Handler: software.amazonaws.example.product.handler.GetProductByIdViaServerlessV2DataApiHandler::handleRequest
       Events:
         GetRequestById:
           Type: Api

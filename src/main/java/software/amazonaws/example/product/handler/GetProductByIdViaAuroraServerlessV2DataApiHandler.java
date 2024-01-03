@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.rdsdata.model.Field;
 import software.amazon.awssdk.services.rdsdata.model.SqlParameter;
 import software.amazonaws.example.product.entity.Product;
 
-public class GetProductByIdViaServerlessV2DataApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, Optional<Product>> {
+public class GetProductByIdViaAuroraServerlessV2DataApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, Optional<Product>> {
 
 	private static final RdsDataClient rdsDataClient = RdsDataClient.builder().build();
 	
