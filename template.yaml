@@ -182,7 +182,7 @@ Resources:
       DatabaseName: !Ref DatabaseName
       ServerlessV2ScalingConfiguration:
         MinCapacity: 0.5
-        MaxCapacity: 2
+        MaxCapacity: 1
       DBSubnetGroupName:
         Ref: DBSubnetGroup
   
@@ -195,7 +195,7 @@ Resources:
       
 
 Outputs:
-  AWSLambdaJavaAuroraServerlessV2DataApiEndpoint:
+  AWSLambdaAuroraServerlessV2DataApiEndpoint:
     Description: "API Gateway endpoint URL for Prod stage for AWS Lambda Java Serverless V2 Data API"
     Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/prod/products"
     

@@ -1,6 +1,6 @@
 Example of Lambda using the new Amazon Aurora Serverless V2 Data API with AWS SDK for Java
 
-To use t you're required to:
+To use it you're required to:
 
 1) Execute these 2  sql statements before calling GetProductByIdViaServerlessV2DataAPILambda via API Gateway
 
