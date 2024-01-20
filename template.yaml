@@ -118,7 +118,8 @@ Resources:
   GetProductByIdDataApiFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: GetProductByIdViaAuroraServerlessV2DataApiLambda
+      FunctionName: GetProductByIdViaAuroraServerlessV2DataApi
+      AutoPublishAlias: liveVersion
       Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2DataApiHandler::handleRequest
       Policies:
         - Version: '2012-10-17' # Policy Document
