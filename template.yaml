@@ -150,6 +150,45 @@ Resources:
       LogGroupName: !Sub "/aws/lambda/${GetProductByIdDataApiFunction}"
       RetentionInDays: 7
 
+
+  GetProductByIdDataApiWithPrimingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetProductByIdViaAuroraServerlessV2DataApiWithPriming
+      AutoPublishAlias: liveVersion
+      Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2DataApiWithPrimingHandler::handleRequest
+      Policies:
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - rds-data:*
+              Resource:
+                 !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                !Ref DBSecret
+                
+      Events:
+        GetRequestById:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /productsWithPriming/{id}
+            Method: get     
+            
+            
+  GetProductByIdDataApiWithPrimingFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GetProductByIdDataApiWithPrimingFunction}"
+      RetentionInDays: 7
+
+
+
+
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
