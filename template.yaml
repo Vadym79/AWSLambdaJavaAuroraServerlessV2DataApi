@@ -36,7 +36,9 @@ Parameters:
 Globals:
   Function:
     CodeUri: target/aws-lambda-java-21-aurora-serverless-v2-data-api-1.0.0-SNAPSHOT.jar
-    Runtime: java21
+    Runtime: java21 
+    SnapStart:
+      ApplyOn: PublishedVersions 
     Timeout: 30 
     MemorySize: 1024  
     Environment:
@@ -113,14 +115,11 @@ Resources:
         UsagePlanId: !Ref MyApiUsagePlan
 
 
-  GetProductByIdFunction:
+  GetProductByIdDataApiFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: GetProductByIdViaAuroraServerlessV2DataApiLambda
       Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2DataApiHandler::handleRequest
-      Environment:
-        Variables:
-          DB_ENDPOINT: !GetAtt AuroraServerlessV2Cluster.Endpoint.Address
       Policies:
         - Version: '2012-10-17' # Policy Document
           Statement:
@@ -144,10 +143,10 @@ Resources:
             Method: get     
             
             
-  GetProductByIdFunctionLogGroup:
+  GetProductByIdDataApiFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${GetProductByIdFunction}"
+      LogGroupName: !Sub "/aws/lambda/${GetProductByIdDataApiFunction}"
       RetentionInDays: 7
 
   DBSubnetGroup:

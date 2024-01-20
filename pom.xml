@@ -23,11 +23,6 @@
    </repositories>
    <dependencies>
       <dependency>
-         <groupId>software.amazon.awssdk</groupId>
-         <artifactId>dynamodb</artifactId>
-         <scope>compile</scope>
-      </dependency>
-      <dependency>
          <groupId>com.amazonaws</groupId>
          <artifactId>aws-lambda-java-core</artifactId>
          <version>${aws.lambda.java.core.version}</version>
@@ -56,12 +51,12 @@
             </exclusion>
          </exclusions>
       </dependency>
-     
+     <!--
      <dependency>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>url-connection-client</artifactId>
      </dependency>
-     
+     -->
      <!--
      <dependency>
 	    <groupId>software.amazon.awssdk</groupId>
@@ -79,6 +74,12 @@
     	<groupId>software.amazon.awssdk</groupId>
     	<artifactId>rdsdata</artifactId>
 	</dependency>
+    <dependency>
+       <groupId>software.amazon.awssdk</groupId>
+       <artifactId>secretsmanager</artifactId>
+     </dependency>
+    
+    
     <dependency>
        <groupId>org.slf4j</groupId>
        <artifactId>slf4j-simple</artifactId>

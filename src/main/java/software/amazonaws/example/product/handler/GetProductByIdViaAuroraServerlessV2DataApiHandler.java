@@ -46,7 +46,10 @@ public class GetProductByIdViaAuroraServerlessV2DataApiHandler implements Reques
 		final ExecuteStatementResponse response= rdsDataClient.executeStatement(request);
 		final List<List<Field>> records=response.records();
 		
-		if (records.isEmpty()) return Optional.empty();
+		if (records.isEmpty()) { 
+			System.out.println("no records found");
+			return Optional.empty();
+		}
 		
 		System.out.println("response records: "+records);
 		
@@ -58,5 +61,4 @@ public class GetProductByIdViaAuroraServerlessV2DataApiHandler implements Reques
 		
 		return Optional.of(product);
 	}
-
 }
