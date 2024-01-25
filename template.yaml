@@ -37,8 +37,8 @@ Globals:
   Function:
     CodeUri: target/aws-lambda-java-21-aurora-serverless-v2-data-api-1.0.0-SNAPSHOT.jar
     Runtime: java21 
-    SnapStart:
-      ApplyOn: PublishedVersions 
+     #SnapStart:
+      #ApplyOn: PublishedVersions 
     Timeout: 30 
     MemorySize: 1024  
     Environment:
@@ -113,6 +113,42 @@ Resources:
         KeyId: !Ref MyApiKey
         KeyType: API_KEY
         UsagePlanId: !Ref MyApiUsagePlan
+
+
+  CreateUserDataApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateUserViaAuroraServerlessV2DataApi
+      AutoPublishAlias: liveVersion
+      Handler: software.amazonaws.example.product.handler.CreateUserViaAuroraServerlessV2DataApiHandler::handleRequest
+      Policies:
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - rds-data:*
+              Resource:
+                 !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                !Ref DBSecret
+                
+      Events:
+        PutRequest:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /user
+            Method: put
+            
+            
+  CreateUserDataApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${CreateUserDataApiFunction}"
+      RetentionInDays: 7
 
 
   GetProductByIdDataApiFunction:
@@ -215,6 +251,7 @@ Resources:
     Properties:
       DBClusterIdentifier: !Ref DBClusterName
       Engine: aurora-postgresql
+      #Port: 5432
       EnableHttpEndpoint: true
       MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]]
       MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]

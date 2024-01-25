@@ -20,9 +20,68 @@ VALUES (1, 'Photobook A3', 2.19);
 
 ...
 INSERT INTO products (id, name, price)
-VALUES (50, 'Calender A5', 43.65); 
+VALUES (50, 'Calender A5', 43.65);
 
-2) Provide your own subnet ids in the template.yaml in the Parameters section
+2)
+Transactional Example
+
+CREATE TABLE tbl_user (
+    id bigint NOT NULL,
+    first_name varchar(255) NOT NULL,
+    last_name varchar(255) NOT NULL,
+    email varchar(128) NOT NULL,
+    PRIMARY KEY (id)    
+);
+
+CREATE SEQUENCE user_id START 1;
+
+CREATE TABLE tbl_user_address (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    street varchar(255) NOT NULL,
+    city varchar(255) NOT NULL,
+    country varchar(128) NOT NULL,
+    zip varchar(64) NOT NULL,
+    PRIMARY KEY (id) ,  
+    CONSTRAINT fk_user_id
+      FOREIGN KEY(user_id) 
+	  REFERENCES tbl_user(id)
+);
+
+CREATE SEQUENCE user_address_id START 1;
+
+Successful JSON Request to create user and address
+
+
+{
+  "first_name": "Vadym",
+  "last_name":  "Kazulkin",
+  "email":  "blabla@email.com",
+  "address": {
+     "street": "Alexandra Platz",
+     "city": "Berlin",
+     "country": "Germany",
+     "zip": "53334"
+   }
+}
+ 
+
+Failure JSON Request (mssing user's last name) to create user and address
+
+
+{
+  "first_name": "Vadym",
+  "email":  "blabla@email.com",
+  "address": {
+     "street": "Alexandra Platz",
+     "city": "Berlin",
+     "country": "Germany",
+     "zip": "53334"
+   }
+}
+
+
+3) Provide your own subnet ids in the template.yaml in the Parameters section
 
  Subnets:
     Type: CommaDelimitedList  
