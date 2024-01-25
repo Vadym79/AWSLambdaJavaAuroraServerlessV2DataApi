@@ -1,4 +1,4 @@
-package software.amazonaws.example.product.entity.dao;
+package software.amazonaws.example.product.dao;
 
 import java.math.BigDecimal;
 import java.util.List;

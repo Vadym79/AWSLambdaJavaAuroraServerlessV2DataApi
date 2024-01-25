@@ -8,8 +8,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.google.gson.Gson;
 
+import software.amazonaws.example.product.dao.AuroraServerlessV2DataApiDao;
 import software.amazonaws.example.product.entity.User;
-import software.amazonaws.example.product.entity.dao.AuroraServerlessV2DataApiDao;
 
 public class CreateUserViaAuroraServerlessV2DataApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, User> {
 

@@ -9,8 +9,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 
+import software.amazonaws.example.product.dao.AuroraServerlessV2DataApiDao;
 import software.amazonaws.example.product.entity.Product;
-import software.amazonaws.example.product.entity.dao.AuroraServerlessV2DataApiDao;
 
 public class GetProductByIdViaAuroraServerlessV2DataApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, Optional<Product>> {
 

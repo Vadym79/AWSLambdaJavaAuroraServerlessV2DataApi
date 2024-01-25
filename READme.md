@@ -66,7 +66,7 @@ Successful JSON Request to create user and address
 }
  
 
-Failure JSON Request (mssing user's last name) to create user and address
+Failure JSON Request (missing user's last name) to create user and address
 
 
 {
