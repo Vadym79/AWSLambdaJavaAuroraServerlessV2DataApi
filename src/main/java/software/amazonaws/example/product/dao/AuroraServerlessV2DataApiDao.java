@@ -28,30 +28,7 @@ public class AuroraServerlessV2DataApiDao {
 	private final String dbClusterArn = System.getenv("DB_CLUSTER_ARN");
 	private final String dbSecretStoreArn = System.getenv("DB_CRED_SECRETS_STORE_ARN");
 	
-	private static final String CREATE_USER_SEQ= "CREATE SEQUENCE user_id START 1;"; 
-	private static final String CREATE_USER_ADDRESS_SEQ= "CREATE SEQUENCE user_address_id START 1;"; 
 	
-	private static final String CREATE_USER_TABLE = "CREATE TABLE tbl_user ( \n"+
-		    "id bigint NOT NULL, \n"+
-		    "first_name varchar(255) NOT NULL, \n"+
-		    "last_name varchar(255) NOT NULL, \n"+
-		    "email varchar(128) NOT NULL, \n"+
-		    "PRIMARY KEY (id)   \n"+ 
-		");";
-	
-	private static final String CREATE_USER_ADDRESS_TABLE = "CREATE TABLE tbl_user_address ( \n"+
-		    "id bigint NOT NULL,\n"+
-		    "user_id bigint NOT NULL, \n"+
-		    "street varchar(255) NOT NULL,\n"+
-		    "city varchar(255) NOT NULL, \n"+
-		    "country varchar(128) NOT NULL, \n"+
-		    "zip varchar(64) NOT NULL, \n"+
-		    "PRIMARY KEY (id),  \n"+
-		    "CONSTRAINT fk_user_id  \n"+
-		     " FOREIGN KEY(user_id)  \n"+
-			    "REFERENCES tbl_user(id) \n"+
-		");";
-
 	public Optional<Product> getProductById(final String id) {
 				
 		final String sql="select id, name, price from products where id=:id";
@@ -85,10 +62,34 @@ public class AuroraServerlessV2DataApiDao {
 
 	
 	public void createTableAndSequences () {
-		this.createTableAndSequences(CREATE_USER_SEQ);
-		this.createTableAndSequences(CREATE_USER_ADDRESS_SEQ);
-		this.createTableAndSequences(CREATE_USER_TABLE);
-		this.createTableAndSequences(CREATE_USER_ADDRESS_TABLE);
+		final String CREATE_USER_SEQUENCE_SQL= "CREATE SEQUENCE user_id START 1;"; 
+		final String CREATE_USER_ADDRESS_SEQUENCE_SQL= "CREATE SEQUENCE user_address_id START 1;"; 
+		
+	    final String CREATE_USER_TABLE_SQL = "CREATE TABLE tbl_user ( \n"+
+			    "id bigint NOT NULL, \n"+
+			    "first_name varchar(255) NOT NULL, \n"+
+			    "last_name varchar(255) NOT NULL, \n"+
+			    "email varchar(128) NOT NULL, \n"+
+			    "PRIMARY KEY (id)   \n"+ 
+			");";
+		
+		final String CREATE_USER_ADDRESS_TABLE_SQL = "CREATE TABLE tbl_user_address ( \n"+
+			    "id bigint NOT NULL,\n"+
+			    "user_id bigint NOT NULL, \n"+
+			    "street varchar(255) NOT NULL,\n"+
+			    "city varchar(255) NOT NULL, \n"+
+			    "country varchar(128) NOT NULL, \n"+
+			    "zip varchar(64) NOT NULL, \n"+
+			    "PRIMARY KEY (id),  \n"+
+			    "CONSTRAINT fk_user_id  \n"+
+			     " FOREIGN KEY(user_id)  \n"+
+				    "REFERENCES tbl_user(id) \n"+
+			");";
+
+		this.createTableAndSequences(CREATE_USER_SEQUENCE_SQL);
+		this.createTableAndSequences(CREATE_USER_ADDRESS_SEQUENCE_SQL);
+		this.createTableAndSequences(CREATE_USER_TABLE_SQL);
+		this.createTableAndSequences(CREATE_USER_ADDRESS_TABLE_SQL);
 	}
 	
     private void createTableAndSequences(String sql) {
@@ -109,14 +110,14 @@ public class AuroraServerlessV2DataApiDao {
 
 	private long getNextSequenceValue(final String sequenceName) {
 		
-		final String sql="SELECT nextval('"+sequenceName+"');";
+		final String NEXT_SEQUENCE_VAL_SQL="SELECT nextval('"+sequenceName+"');";
 
-		System.out.println(" get next value for sequence: "+sql);
-		System.out.println("dbEndpoint: "+dbEndpoint+ " dbName: "+dbName+ " dbclusterARN: "+dbClusterArn+ " dbSecretStoreARN: "+dbSecretStoreArn);
+		System.out.println(" get next value for sequence: "+NEXT_SEQUENCE_VAL_SQL);
+		//System.out.println("dbEndpoint: "+dbEndpoint+ " dbName: "+dbName+ " dbclusterARN: "+dbClusterArn+ " dbSecretStoreARN: "+dbSecretStoreArn);
 		final ExecuteStatementRequest request= ExecuteStatementRequest.builder().database("").
 				resourceArn(dbClusterArn).
 				secretArn(dbSecretStoreArn).
-				sql(sql).
+				sql(NEXT_SEQUENCE_VAL_SQL).
 				//formatRecordsAs(RecordsFormatType.JSON).
 				build();
 		final ExecuteStatementResponse response= rdsDataClient.executeStatement(request);
@@ -140,10 +141,10 @@ public class AuroraServerlessV2DataApiDao {
 		long userId= getNextSequenceValue("user_id");
 		user.setId(userId);
 		
-		final String createUserSql = "INSERT INTO tbl_user (id, first_name, last_name, email) \n"
+		final String CREATE_USER_SQL = "INSERT INTO tbl_user (id, first_name, last_name, email) \n"
 				+ "VALUES (:id, :firstName, :lastName, :email);";
 
-		System.out.println("creating user "+createUserSql);
+		System.out.println("creating user "+CREATE_USER_SQL);
 		final SqlParameter userIdParam = SqlParameter.builder().name("id")
 				.value(Field.builder().longValue(user.getId()).build()).build();
 		final SqlParameter firstNameParam = SqlParameter.builder().name("firstName")
@@ -154,7 +155,7 @@ public class AuroraServerlessV2DataApiDao {
 				.value(Field.builder().stringValue(user.getEmail()).build()).build();
 
 		final ExecuteStatementRequest createUserRequest = ExecuteStatementRequest.builder().database("")
-				.resourceArn(dbClusterArn).secretArn(dbSecretStoreArn).sql(createUserSql)
+				.resourceArn(dbClusterArn).secretArn(dbSecretStoreArn).sql(CREATE_USER_SQL)
 				.parameters(userIdParam, firstNameParam, lastNameParam, emailParam).transactionId(transactionId).
 				// formatRecordsAs(RecordsFormatType.JSON).
 				build();
@@ -170,13 +171,13 @@ public class AuroraServerlessV2DataApiDao {
 		final UserAddress userAddress = user.getUserAddress();
 		userAddress.setId(userAddressId);
 		
-		final String creaeUserAddressSql = "INSERT INTO tbl_user_address (id, user_id, street, city, country, zip) \n"
+		final String CREATE_USER_ADDRESS_SQL = "INSERT INTO tbl_user_address (id, user_id, street, city, country, zip) \n"
 				+ "VALUES (:id, :userId, :street, :city, :country, :zip);";
 
-		System.out.println("creating user address "+creaeUserAddressSql);
+		System.out.println("creating user address "+CREATE_USER_ADDRESS_SQL);
 		final SqlParameter userAddressIdParam = SqlParameter.builder().name("id")
 				.value(Field.builder().longValue(userAddress.getId()).build()).build();
-		final SqlParameter userIdParam1 = SqlParameter.builder().name("userId")
+		final SqlParameter userIdParam = SqlParameter.builder().name("userId")
 				.value(Field.builder().longValue(user.getId()).build()).build();
 		final SqlParameter streetParam = SqlParameter.builder().name("street")
 				.value(Field.builder().stringValue(userAddress.getStreet()).build()).build();
@@ -189,8 +190,8 @@ public class AuroraServerlessV2DataApiDao {
 	
 		
 		final ExecuteStatementRequest createUserAddressRequest = ExecuteStatementRequest.builder().database("")
-				.resourceArn(dbClusterArn).secretArn(dbSecretStoreArn).sql(creaeUserAddressSql)
-				.parameters(userAddressIdParam, userIdParam1, streetParam, cityParam, countryParam, zipParam).transactionId(transactionId).
+				.resourceArn(dbClusterArn).secretArn(dbSecretStoreArn).sql(CREATE_USER_ADDRESS_SQL)
+				.parameters(userAddressIdParam, userIdParam, streetParam, cityParam, countryParam, zipParam).transactionId(transactionId).
 				// formatRecordsAs(RecordsFormatType.JSON).
 				build();
 		final ExecuteStatementResponse createUserAddressResponse = rdsDataClient.executeStatement(createUserAddressRequest);
