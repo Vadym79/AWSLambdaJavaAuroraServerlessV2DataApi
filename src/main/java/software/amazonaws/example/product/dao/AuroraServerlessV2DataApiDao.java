@@ -1,10 +1,14 @@
 package software.amazonaws.example.product.dao;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import software.amazon.awssdk.services.rdsdata.RdsDataClient;
+import software.amazon.awssdk.services.rdsdata.model.BatchExecuteStatementRequest;
+import software.amazon.awssdk.services.rdsdata.model.BatchExecuteStatementResponse;
 import software.amazon.awssdk.services.rdsdata.model.BeginTransactionRequest;
 import software.amazon.awssdk.services.rdsdata.model.BeginTransactionResponse;
 import software.amazon.awssdk.services.rdsdata.model.CommitTransactionRequest;
@@ -15,6 +19,7 @@ import software.amazon.awssdk.services.rdsdata.model.Field;
 import software.amazon.awssdk.services.rdsdata.model.RollbackTransactionRequest;
 import software.amazon.awssdk.services.rdsdata.model.RollbackTransactionResponse;
 import software.amazon.awssdk.services.rdsdata.model.SqlParameter;
+import software.amazon.awssdk.services.rdsdata.model.UpdateResult;
 import software.amazonaws.example.product.entity.Product;
 import software.amazonaws.example.product.entity.User;
 import software.amazonaws.example.product.entity.UserAddress;
@@ -31,7 +36,7 @@ public class AuroraServerlessV2DataApiDao {
 	
 	public Optional<Product> getProductById(final String id) {
 				
-		final String sql="select id, name, price from products where id=:id";
+		final String sql="select id, name, price from tbl_product where id=:id";
 		final SqlParameter sqlParam= SqlParameter.builder().name("id").value(Field.builder().longValue(Long.valueOf(id)).build()).build();
 		System.out.println(" sql param "+sqlParam);
 		final ExecuteStatementRequest request= ExecuteStatementRequest.builder().database("").
@@ -54,14 +59,46 @@ public class AuroraServerlessV2DataApiDao {
 		final List<Field> fields= records.get(0);
 		final String name= fields.get(1).stringValue(); 
 		final BigDecimal price= new BigDecimal(fields.get(2).stringValue());
-		final Product product = new Product(id, name, price);
+		final Product product = new Product(Long.valueOf(id), name, price);
 		System.out.println("Product :"+product);
 		
 		return Optional.of(product);
 	}
 
+
 	
-	public void createTableAndSequences () {
+	public List<Product> createProducts(List<Product> products) {
+		
+		final String CREATE_PRODUCT_SQL = "INSERT INTO tbl_product (id, name, price)"+
+				"VALUES (:id, :name, :price);";			
+		Set<Set<SqlParameter>> parameterSets= new HashSet<>();
+		for(Product product : products) {	
+			long productId= getNextSequenceValue("product_id");
+			product.setId(productId);
+			final SqlParameter productIdParam= SqlParameter.builder().name("id").value(Field.builder().longValue(Long.valueOf(productId)).build()).build();
+			final SqlParameter productNameParam= SqlParameter.builder().name("name").value(Field.builder().stringValue(product.getName()).build()).build();
+			final SqlParameter productPriceParam= SqlParameter.builder().name("price").value(Field.builder().doubleValue(product.getPrice().doubleValue()).build()).build();
+			
+			Set<SqlParameter> sqlParams= Set.of(productIdParam,productNameParam,productPriceParam);
+			parameterSets.add(sqlParams);
+		}
+		final BatchExecuteStatementRequest request= BatchExecuteStatementRequest.builder().database("").
+				resourceArn(dbClusterArn).
+				secretArn(dbSecretStoreArn).
+				sql(CREATE_PRODUCT_SQL).
+				parameterSets(parameterSets).
+				//formatRecordsAs(RecordsFormatType.JSON).
+				build();
+		final BatchExecuteStatementResponse response= rdsDataClient.batchExecuteStatement(request);
+		for(final UpdateResult updateResult: response.updateResults()) {
+			System.out.println("update result " +updateResult.toString());
+		}
+		return products;
+		
+	}
+	
+	
+	public void createUserTablesAndSequences () {
 		final String CREATE_USER_SEQUENCE_SQL= "CREATE SEQUENCE user_id START 1;"; 
 		final String CREATE_USER_ADDRESS_SEQUENCE_SQL= "CREATE SEQUENCE user_address_id START 1;"; 
 		
@@ -91,6 +128,24 @@ public class AuroraServerlessV2DataApiDao {
 		this.createTableAndSequences(CREATE_USER_TABLE_SQL);
 		this.createTableAndSequences(CREATE_USER_ADDRESS_TABLE_SQL);
 	}
+
+	
+	public void createProductTableAndSequence () {
+		final String CREATE_USER_SEQUENCE_SQL= "CREATE SEQUENCE product_id START 1;"; 
+		
+	    final String CREATE_USER_TABLE_SQL = "CREATE TABLE tbl_product ( \n"+
+			    "id bigint NOT NULL, \n"+
+			    "name varchar(255) NOT NULL, \n"+
+			    "price decimal NOT NULL, \n"+
+			    "PRIMARY KEY (id)   \n"+ 
+			");";
+		
+		this.createTableAndSequences(CREATE_USER_SEQUENCE_SQL);
+		this.createTableAndSequences(CREATE_USER_TABLE_SQL);
+		
+	}
+
+	
 	
     private void createTableAndSequences(String sql) {
 

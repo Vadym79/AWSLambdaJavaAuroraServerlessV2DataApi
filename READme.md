@@ -4,8 +4,10 @@ To use it you're required to:
 
 1) Execute these 2  sql statements before calling GetProductByIdViaServerlessV2DataAPILambda via API Gateway
 
-CREATE TABLE products (
-    id int NOT NULL,
+CREATE SEQUENCE product_id START 1;
+
+CREATE TABLE tbl_product (
+    id bigint NOT NULL,
     name varchar(255) NOT NULL,
     price decimal NOT NULL,
     PRIMARY KEY (id)    
@@ -13,14 +15,32 @@ CREATE TABLE products (
 
 insert 50 products with id 1 to 50
 
-INSERT INTO products (id, name, price)
+INSERT INTO product (id, name, price)
 VALUES (1, 'Photobook A3', 2.19); 
 
 ....
 
 ...
-INSERT INTO products (id, name, price)
+INSERT INTO product (id, name, price)
 VALUES (50, 'Calender A5', 43.65);
+
+
+Json for creating array of products
+
+[
+	{ 
+	"name": "Calendar A3",
+	"price": "23.56"
+	},
+	{ 
+	"name": "Photobook A4",
+	"price": "45.21"
+	},
+	{ 
+	"name": "Mug red",
+	"price": "10.31"
+	}	
+]
 
 2)
 Transactional Example

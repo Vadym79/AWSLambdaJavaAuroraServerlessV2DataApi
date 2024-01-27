@@ -7,26 +7,32 @@ package software.amazonaws.example.product.entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.google.gson.annotations.SerializedName;
+
 
 public class Product {
-  private String id;
+  private Long id;
+  
+  @SerializedName("name")
   private String name;
+  
+  @SerializedName("price")
   private BigDecimal price;
 
   public Product() {
   }
 
-  public Product(String id, String name, BigDecimal price) {
+  public Product(Long id, String name, BigDecimal price) {
     this.id = id;
     this.name = name;
     setPrice(this.price = price);
   }
 
-  public String getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

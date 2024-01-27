@@ -178,6 +178,7 @@ Resources:
             RestApiId: !Ref MyApi
             Path: /products/{id}
             Method: get     
+
             
             
   GetProductByIdDataApiFunctionLogGroup:
@@ -185,6 +186,7 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/lambda/${GetProductByIdDataApiFunction}"
       RetentionInDays: 7
+
 
 
   GetProductByIdDataApiWithPrimingFunction:
@@ -222,6 +224,41 @@ Resources:
       LogGroupName: !Sub "/aws/lambda/${GetProductByIdDataApiWithPrimingFunction}"
       RetentionInDays: 7
 
+  CreateProductsDataApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateProductsViaAuroraServerlessV2DataApi
+      AutoPublishAlias: liveVersion
+      Handler: software.amazonaws.example.product.handler.CreateProductsViaAuroraServerlessV2DataApiHandler::handleRequest
+      Policies:
+        - Version: '2012-10-17' # Policy Document
+          Statement:
+            - Effect: Allow
+              Action:
+                - rds-data:*
+              Resource:
+                 !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                !Ref DBSecret
+                
+      Events:
+        PutProducts:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /products
+            Method: put     
+
+            
+            
+  CreateProductsDataApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${CreateProductsDataApiFunction}"
+      RetentionInDays: 7
 
 
 
