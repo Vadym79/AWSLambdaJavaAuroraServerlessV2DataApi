@@ -1,6 +1,8 @@
-Example of Lambda using the new Amazon Aurora Serverless V2 Data API with AWS SDK for Java
+# Example of Lambda using the new Amazon Aurora Serverless V2 Data API with AWS SDK for Java to write to PostgreSQL Aurora Serverless v2
 
-To use it you're required to:
+Explored DATA API in terms of (batch)SQL statements, database transactions, performances measurements including lambda cold and warm starts. 
+
+# To use it you're required to:
 
 1) Execute these 2  sql statements before calling GetProductByIdViaServerlessV2DataAPILambda via API Gateway
 
