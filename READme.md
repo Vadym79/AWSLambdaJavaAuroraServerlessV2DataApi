@@ -1,5 +1,10 @@
 # Example of Lambda using the new Amazon Aurora Serverless V2 Data API with AWS SDK for Java to write to PostgreSQL Aurora Serverless v2
 
+## Architecture
+
+<p align="center">
+  <img src="spring-boot-3.2-with-spring-cloud-function/src/main/resources/img/app_arch.png" alt="Application Architecture"/>
+</p>
 
 ## Installation and deployment
 
