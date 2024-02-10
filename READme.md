@@ -3,7 +3,7 @@
 ## Architecture
 
 <p align="center">
-  <img src="spring-boot-3.2-with-spring-cloud-function/src/main/resources/img/app_arch.png" alt="Application Architecture"/>
+  <img src="src/main/resources/img/app_arch.png" alt="Application Architecture"/>
 </p>
 
 ## Installation and deployment
