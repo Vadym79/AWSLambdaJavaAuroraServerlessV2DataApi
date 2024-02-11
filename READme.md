@@ -137,5 +137,5 @@ Failure JSON Request (missing user's last name) to create user and address
       
 ## Further Readings 
 
-You can read my article series "Data API for Amazon Aurora Serverless v2 with AWS SDK for Java" on https://dev.to/aws-builders/data-api-for-amazon-aurora-serverless-v2-with-aws-sdk-for-java-part-1-introduction-and-set-up-of-the-sample-application-3g71/edit
+You can read my article series [Data API for Amazon Aurora Serverless v2 with AWS SDK for Java]( https://dev.to/aws-builders/data-api-for-amazon-aurora-serverless-v2-with-aws-sdk-for-java-part-1-introduction-and-set-up-of-the-sample-application-3g71).
   
