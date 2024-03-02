@@ -48,6 +48,9 @@ Globals:
         DB_NAME: !Ref DatabaseName
         DB_CLUSTER_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
         DB_CRED_SECRETS_STORE_ARN: !Ref  DBSecret
+        DB_USER_PASSWORD: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]
+        DB_USER_NAME: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]] 
+        
         
 Resources:
 
@@ -261,6 +264,62 @@ Resources:
       RetentionInDays: 7
 
 
+  GetProductByIdWithoutDataApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetProductByIdViaAuroraServerlessV2
+      AutoPublishAlias: liveVersion
+      Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2WithoutDataApiHandler::handleRequest   
+      Environment:
+        Variables:
+          JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      
+      Policies:
+        - VPCAccessPolicy: {}
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::GetAtt: LambdaSecurityGroup.GroupId
+        SubnetIds: !Ref  Subnets
+      Events:
+        GetRequestById:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /productsWithoutDataAPI/{id}
+            Method: get
+
+  GetProductByIdWithoutDataApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${GetProductByIdWithoutDataApiFunction}"
+      RetentionInDays: 7
+
+  VPCSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS DB Instance.
+      VpcId: 
+         Ref: VpcId 
+      SecurityGroupEgress: 
+        - CidrIp: '0.0.0.0/0'
+          Description: lambda RDS access over 5432
+          FromPort: 5432
+          IpProtocol: TCP
+          ToPort: 5432
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '5432'
+          ToPort: '5432'
+          SourceSecurityGroupId:
+               Ref: LambdaSecurityGroup
+               
+  LambdaSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: SecurityGroup for Serverless Functions
+        VpcId: 
+          Ref: VpcId
+
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -298,6 +357,8 @@ Resources:
         MaxCapacity: 1
       DBSubnetGroupName:
         Ref: DBSubnetGroup
+      VpcSecurityGroupIds:
+      - !Ref VPCSecurityGroup
   
   AuroraServerlessV2Instance:
     Type: 'AWS::RDS::DBInstance'
