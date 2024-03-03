@@ -48,9 +48,6 @@ Globals:
         DB_NAME: !Ref DatabaseName
         DB_CLUSTER_ARN: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${DBClusterName}
         DB_CRED_SECRETS_STORE_ARN: !Ref  DBSecret
-        DB_USER_PASSWORD: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]
-        DB_USER_NAME: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]] 
-        
         
 Resources:
 
@@ -272,8 +269,8 @@ Resources:
       Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2WithoutDataApiHandler::handleRequest   
       Environment:
         Variables:
-          JAVA_TOOL_OPTIONS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
-      
+          DB_USER_PASSWORD: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]
+          DB_USER_NAME: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]] 
       Policies:
         - VPCAccessPolicy: {}
       VpcConfig:
