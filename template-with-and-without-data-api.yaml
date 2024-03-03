@@ -26,7 +26,10 @@ Parameters:
   Stage:
     Type: String
     Default: prod
-    
+  VpcId:
+    Type: String
+    Default: vpc-950cd6fd
+    Description: VpcId of your existing Virtual Private Cloud (VPC)
   Subnets:
     Type: CommaDelimitedList  
     Default: subnet-0787be4d, subnet-88dc46e0
@@ -260,7 +263,7 @@ Resources:
   GetProductByIdWithoutDataApiFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: GetProductByIdViaAuroraServerlessV2
+      FunctionName: GetProductByIdViaAuroraServerlessV2WithoutDataApi
       AutoPublishAlias: liveVersion
       Handler: software.amazonaws.example.product.handler.GetProductByIdViaAuroraServerlessV2WithoutDataApiHandler::handleRequest   
       Environment:
