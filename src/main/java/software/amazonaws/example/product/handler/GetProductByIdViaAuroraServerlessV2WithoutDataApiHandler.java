@@ -51,7 +51,7 @@ public class GetProductByIdViaAuroraServerlessV2WithoutDataApiHandler
 				PreparedStatement preparedStatement = connection.prepareStatement(sql);
 				ResultSet rs = preparedStatement.executeQuery()) {
 			preparedStatement.setLong(1, Long.valueOf(id));
-			while (rs.next()) {
+			if (rs.next()) {
 				Long productId = rs.getLong("id");
 				String name = rs.getString("name");
 				BigDecimal price = rs.getBigDecimal("price");
