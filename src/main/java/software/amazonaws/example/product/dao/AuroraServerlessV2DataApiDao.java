@@ -68,6 +68,7 @@ public class AuroraServerlessV2DataApiDao {
 
 	
 	public List<Product> createProducts(List<Product> products) {
+		
 		/*
 		if (products.size() ==1) {
 			
@@ -75,6 +76,7 @@ public class AuroraServerlessV2DataApiDao {
 			return null;
 		}
 		*/
+		
 		final String CREATE_PRODUCT_SQL = "INSERT INTO tbl_product (id, name, price)"+
 				"VALUES (:id, :name, :price);";			
 		Set<Set<SqlParameter>> parameterSets= new HashSet<>();
