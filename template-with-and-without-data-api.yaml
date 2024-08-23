@@ -363,6 +363,7 @@ Resources:
       DBInstanceClass: db.serverless
       DBClusterIdentifier: !Ref AuroraServerlessV2Cluster
       #EnablePerformanceInsights: true
+      #PerformanceInsightsRetentionPeriod: 7
       
 
 Outputs:

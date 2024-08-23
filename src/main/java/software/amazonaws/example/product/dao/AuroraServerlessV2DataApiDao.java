@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import software.amazon.awssdk.services.rdsdata.RdsDataAsyncClient;
 import software.amazon.awssdk.services.rdsdata.RdsDataClient;
 import software.amazon.awssdk.services.rdsdata.model.BatchExecuteStatementRequest;
 import software.amazon.awssdk.services.rdsdata.model.BatchExecuteStatementResponse;
@@ -28,6 +29,7 @@ public class AuroraServerlessV2DataApiDao {
 	
 	private static final RdsDataClient rdsDataClient = RdsDataClient.builder().build();
 	
+	
 	private final String dbEndpoint = System.getenv("DB_ENDPOINT");
 	private final String dbName = System.getenv("DB_NAME");
 	private final String dbClusterArn = System.getenv("DB_CLUSTER_ARN");
@@ -35,7 +37,6 @@ public class AuroraServerlessV2DataApiDao {
 	
 	
 	public Optional<Product> getProductById(final String id) {
-				
 		final String sql="select id, name, price from tbl_product where id=:id";
 		final SqlParameter sqlParam= SqlParameter.builder().name("id").value(Field.builder().longValue(Long.valueOf(id)).build()).build();
 		System.out.println(" sql param "+sqlParam);
@@ -297,7 +298,7 @@ public class AuroraServerlessV2DataApiDao {
 						.rollbackTransaction(transactionRollbackRequest);
 				System.out.println("transaction rollback status:  " + transactionRollbackResponse.transactionStatus());
 			}
+			throw ex;
 		}
-		return null;
 	}
 }

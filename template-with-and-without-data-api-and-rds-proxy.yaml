@@ -474,7 +474,7 @@ Resources:
       DBClusterIdentifiers: [ !Ref AuroraServerlessV2Cluster]
       TargetGroupName: default
       ConnectionPoolConfigurationInfo:
-        MaxConnectionsPercent: 5
+        MaxConnectionsPercent: 20
         MaxIdleConnectionsPercent: 4
         ConnectionBorrowTimeout: 120
 
