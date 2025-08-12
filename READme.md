@@ -1,5 +1,7 @@
 # Example of Lambda using the new Amazon Aurora Serverless V2 Data API with AWS SDK for Java to write to PostgreSQL Aurora Serverless v2
 
+Please follow my [Data API for Amazon Aurora Serverless v2](https://dev.to/vkazulkin/series/26067) article series.  
+
 ## Architecture
 
 <p align="center">
